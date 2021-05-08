@@ -13,6 +13,7 @@ import application.model.LevelParser;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -28,6 +29,8 @@ public class LevelController {
 	@FXML
 	AnchorPane pane;
 	
+	GridPane gridPane = new GridPane();
+	
 	Grid grid;
 
 	@FXML
@@ -39,9 +42,8 @@ public class LevelController {
 
 		ConfigParser configParser = new ConfigParser(Paths.get(directory, "Levels.config").toString());
 		configParser.parse();
-
+		
 		ArrayList<File> files = configParser.getFiles();
-		GridPane gridPane = new GridPane();
 		gridPane.setMaxSize(canvas.getWidth(), canvas.getHeight());
 		for (int index = 0, size = 100, rowCount = (int) (canvas.getWidth() / size); index < files.size(); index++) {
 			Button button = new Button("Level " + (index + 1));
@@ -57,6 +59,10 @@ public class LevelController {
 					try {
 						levelParser.parse();
 						grid = new Grid(levelParser.getDimensions(), levelParser.getTiles());
+						gridPane.setDisable(true);
+						for (Node node : gridPane.getChildren()) {
+							node.setVisible(false);							
+						}
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
