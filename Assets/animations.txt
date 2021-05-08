@@ -10,7 +10,7 @@
 
 
 #name of file
-@Image SPRITESHEET spritesheet.png
+@Image spritesheet.png
 
 #type of animation refers to style. 
 #           0 is looping 
@@ -146,7 +146,7 @@ INVISIBLOCK     0       545	905	80	80
 
 
 #name of file
-@Image GUI   gui.png
+@Image   gui.png
 
 #type of animation refers to style. 
 #           0 is looping 
@@ -175,7 +175,7 @@ BLUEVICTORY              0       260     4       880   640
 
 GREENVICTORY             0         4   652       880   640
 
-@Image BLOCK block.png
+@Image block.png
 BLOCKY                   0       0     0         80     40	
 
 

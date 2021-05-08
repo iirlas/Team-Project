@@ -6,9 +6,9 @@ public abstract class GameObject {
 	
 	private Point2D position;
 	
-	public abstract void Start();
+	public abstract void start();
 	
-	public abstract void Update();
+	public abstract void update();
 	
 	public Point2D getPosition() {
 		return position;

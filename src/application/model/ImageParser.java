@@ -14,7 +14,7 @@ import utility.Parser;
 public class ImageParser extends Parser {
 
 	private Image image;
-	private HashMap<String, Sprite> sprites; 
+	private HashMap<String, Sprite> sprites;
 
 	public ImageParser(String filepath) {
 		super(filepath);
@@ -24,29 +24,30 @@ public class ImageParser extends Parser {
 	public HashMap<String, Sprite> getSprites() {
 		return sprites;
 	}
-	
+
 	public Sprite getSprite(String name) {
 		// TODO Auto-generated method stub
 		return sprites.get(name);
 	}
 
-	public void image(String[] arguments, String line) {
+	public void image(String argument, String line) {
 		if (line == null) {
-			File file = new File(getFile().getParent(), arguments[1]);
-			//Scanner scanner = new Scanner(file);
+			File file = new File(getFile().getParent(), argument);
+			// Scanner scanner = new Scanner(file);
 			image = new Image(file.toURI().toString(), true);
-			//scanner.close();
+			// scanner.close();
 		} else {
-			Scanner scanner = new Scanner(line);
-			String name = scanner.next();
-			int type = scanner.nextInt();
+			Scanner lineScanner = new Scanner(line);
+			String name = lineScanner.next();
+			int type = lineScanner.nextInt();
 			Sprite sprite = new Sprite(image, type, null);
-			while (scanner.hasNext()) {
-				BoundingBox bounds = new BoundingBox(scanner.nextDouble(), scanner.nextDouble(), scanner.nextDouble(), scanner.nextDouble());
+			while (lineScanner.hasNext()) {
+				BoundingBox bounds = new BoundingBox(lineScanner.nextDouble(), lineScanner.nextDouble(),
+						lineScanner.nextDouble(), lineScanner.nextDouble());
 				sprite.addBounds(bounds);
 			}
 			getSprites().put(name, sprite);
-			scanner.close();
+			lineScanner.close();
 		}
 	}
 }

@@ -14,11 +14,16 @@ public abstract class Parser {
 	private Pattern pattern;
 
 	public Parser(String filepath) {
-		this(filepath, " *@([a-zA-Z0-9_]+)");
+		this(new File(filepath));
 	}
 
-	public Parser(String filepath, String functionPattern) {
-		setFile(new File(filepath));
+	public Parser(File file) {
+		this(file, " *@([a-zA-Z0-9_]+)");
+	}
+
+	public Parser(File file, String functionPattern) {
+		// TODO Auto-generated constructor stub
+		setFile(file);
 		pattern = Pattern.compile(functionPattern);
 	}
 
@@ -26,7 +31,7 @@ public abstract class Parser {
 			IllegalArgumentException, InvocationTargetException {
 		Scanner scanner = new Scanner(getFile());
 		Method method = null;
-		String[] arguments = null;
+		String arguments = null;
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
 			if (Pattern.matches("^\s*#.*", line) || line.length() == 0) {
@@ -35,8 +40,12 @@ public abstract class Parser {
 
 			Matcher matcher = pattern.matcher(line);
 			if (matcher.find()) {
-				method = getClass().getMethod(matcher.group(1).toLowerCase(), String[].class, String.class);
-				arguments = line.substring(matcher.end() + 1).split("\\s+");
+				method = getClass().getMethod(matcher.group(1).toLowerCase(), String.class, String.class);
+				if (matcher.end() < line.length()) {
+					arguments = line.substring(matcher.end()).trim();
+				} else {
+					arguments = null;
+				}
 				method.invoke(this, arguments, null);
 			} else if (method != null) {
 				method.invoke(this, arguments, line);

@@ -2,30 +2,30 @@ package application.model;
 
 import java.util.ArrayList;
 
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.GraphicsContext;
 import utility.GameObject;
 
-public class Grid extends GameObject {
+public class Grid {
 
-	private ArrayList<GameObject> tiles = new ArrayList<GameObject>();
-	
-	public Grid() {
+	private ArrayList<Tile> tiles;
+	private Rectangle2D dimensions;
+
+	public Grid(Rectangle2D dimensions, ArrayList<Tile> tiles) {
 		// TODO Auto-generated constructor stub
-	}
-	
-	@Override
-	public void Start() {
-		// TODO Auto-generated method stub
-		for (GameObject tile : tiles) {
-			tile.Start();
+		this.dimensions = dimensions;
+		this.tiles = tiles;
+		for (Tile tile : tiles) {
+			tile.start();
 		}
 	}
 
-	@Override
-	public void Update() {
-		// TODO Auto-generated method stub
-		for (GameObject tile : tiles) {
-			tile.Update();
+	public void render(GraphicsContext context) {
+		for (int index = 0; index < tiles.size(); index++) {
+			double x = dimensions.getWidth() * (index % (int) dimensions.getMinX());
+			double y = dimensions.getHeight() * (index / (int) dimensions.getMinX());
+			tiles.get(index).getSprite().render(context, x, y, dimensions.getWidth(), dimensions.getHeight());
 		}
 	}
-
 }

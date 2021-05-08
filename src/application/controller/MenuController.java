@@ -31,33 +31,34 @@ public class MenuController {
 	Canvas canvas;
 
 	@FXML
-	public void initialize() throws FileNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void initialize() throws FileNotFoundException, NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		GraphicsContext context = canvas.getGraphicsContext2D();
-		
+
 		ImageParser imageParser = new ImageParser(Paths.get("Assets", "animations.txt").toString());
 		imageParser.parse();
 		Sprite splash = imageParser.getSprite("SPLASH");
 		splash.play();
 		AnimationTimer loop = new AnimationTimer() {
-			
+
 			@Override
 			public void handle(long now) {
 				// TODO Auto-generated method stub
 				context.setFill(Color.BLUE);
 				context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-				splash.render(context, 56, 50, 713, 500);
-				
+				splash.render(context, 0, 0, canvas.getWidth(), canvas.getHeight());
+
 			}
 		};
 		loop.start();
-		
+
 		startLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
 				// change scene
 				Stage stage = (Stage) canvas.getScene().getWindow();
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/view/Main.fxml"));
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/view/Level.fxml"));
 				try {
 					stage.setScene(new Scene(loader.load()));
 				} catch (IOException e) {
