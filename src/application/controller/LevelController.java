@@ -5,11 +5,13 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import application.model.ConfigParser;
 import application.model.Grid;
 import application.model.ImageParser;
 import application.model.LevelParser;
+import application.model.Tile;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,19 +21,20 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import utility.GameObject;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 public class LevelController {
 
 	@FXML
-	Canvas canvas;
+	private Canvas canvas;
 	@FXML
-	AnchorPane pane;
+	private AnchorPane pane;
 	
-	GridPane gridPane = new GridPane();
-	
-	Grid grid;
+	private GridPane gridPane = new GridPane();
+	private Grid grid;
+	private HashMap<Integer, GameObject> gameObjects;
 
 	@FXML
 	public void initialize() throws FileNotFoundException, NoSuchMethodException, SecurityException,
@@ -39,7 +42,11 @@ public class LevelController {
 		String directory = "Assets";
 		ImageParser imageParser = new ImageParser(Paths.get(directory, "animations.txt").toString());
 		imageParser.parse();
-
+		
+		ObjectParser objectParser = new ObjectParser(Paths.get(directory, "objects.config").toString(), imageParser.getSprites());
+		objectParser.parse();
+		gameObjects = objectParser.getGameObjects();
+				
 		ConfigParser configParser = new ConfigParser(Paths.get(directory, "Levels.config").toString());
 		configParser.parse();
 		
@@ -55,7 +62,7 @@ public class LevelController {
 
 				@Override
 				public void handle(MouseEvent event) {
-					LevelParser levelParser = new LevelParser(file, imageParser);
+					LevelParser levelParser = new LevelParser(file, gameObjects);
 					try {
 						levelParser.parse();
 						grid = new Grid(levelParser.getDimensions(), levelParser.getTiles());
@@ -63,11 +70,11 @@ public class LevelController {
 						for (Node node : gridPane.getChildren()) {
 							node.setVisible(false);							
 						}
+						
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					//
 				}
 			});
 			gridPane.add(button, index % rowCount, index / rowCount);
@@ -85,6 +92,7 @@ public class LevelController {
 				if (grid != null) {
 					grid.render(context);
 				}
+				//turn.render();
 			}
 		};
 		loop.start();
