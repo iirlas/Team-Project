@@ -26,6 +26,14 @@ public class Grid {
 		return dimensions.getHeight();
 	}
 
+	public Tile getTile(int column, int row) {
+		return tiles.get(column + (int) (row * dimensions.getMinX()));
+	}
+
+	public Tile getTile(double x, double y) {
+		return getTile((int) (x / dimensions.getWidth()), (int) (y / dimensions.getHeight()));
+	}
+
 	public void render(GraphicsContext context) {
 		for (int index = 0; index < tiles.size(); index++) {
 			double x = dimensions.getWidth() * (index % (int) dimensions.getMinX());

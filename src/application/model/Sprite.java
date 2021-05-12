@@ -51,6 +51,11 @@ public class Sprite extends Transition {
 		boundingBoxes.add(bounds);
 	}
 
+	public BoundingBox getBounds() {
+		// TODO Auto-generated method stub
+		return boundingBoxes.get(currentBoundsIndex);
+	}
+
 	public BoundingBox getBounds(int index) {
 		return boundingBoxes.get(index);
 	}
@@ -60,22 +65,18 @@ public class Sprite extends Transition {
 	}
 
 	public void render(GraphicsContext context, double x, double y) {
-		render(context, x, y, currentBounds().getWidth(), currentBounds().getHeight());
-	}
-
-	private Bounds currentBounds() {
-		// TODO Auto-generated method stub
-		return boundingBoxes.get(currentBoundsIndex);
+		render(context, x, y, getBounds().getWidth(), getBounds().getHeight());
 	}
 
 	public void render(GraphicsContext context, double x, double y, double width, double height) {
-		context.drawImage(image, currentBounds().getMinX(), currentBounds().getMinY(),
-				currentBounds().getWidth(), currentBounds().getHeight(), x, y, width, height);
+		context.drawImage(image, getBounds().getMinX(), getBounds().getMinY(), getBounds().getWidth(),
+				getBounds().getHeight(), x, y, width, height);
 	}
 
 	@Override
-	protected void interpolate(double frac) {
-		//TODO animation type
-		currentBoundsIndex = (int) Math.round(frac * (boundingBoxes.size() - 1));
+	public void interpolate(double frac) {
+		// TODO animation type
+		currentBoundsIndex = (int) Math.max(0,
+				Math.min(boundingBoxes.size() - 1, Math.round(frac * (boundingBoxes.size() - 1))));
 	}
 }

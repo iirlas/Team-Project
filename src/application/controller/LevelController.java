@@ -15,7 +15,9 @@ import application.model.ObjectParser;
 import application.model.Penguin;
 import application.model.Player;
 import application.model.PlayerParser;
+import application.model.Sprite;
 import application.model.Tile;
+import application.model.TurnManager;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -43,10 +45,9 @@ public class LevelController {
 	private GridPane gridPane = new GridPane();
 	private Grid grid;
 	private HashMap<Integer, GameObject> gameObjects;
-//	protected Rectangle2D dimensions;
-//	protected ArrayList<Tile> tiles;
-	protected ArrayList<Player> players;
-	protected TurnManager turnManager;
+	private HashMap<String, Sprite> sprites;
+	private ArrayList<Player> players;
+	private TurnManager turnManager;
 
 	@FXML
 	public void initialize() throws FileNotFoundException, NoSuchMethodException, SecurityException,
@@ -54,6 +55,8 @@ public class LevelController {
 
 		initObjects();
 		initLevel();
+
+		sprites.get("CURSOR").play();
 
 		GraphicsContext context = canvas.getGraphicsContext2D();
 		AnimationTimer loop = new AnimationTimer() {
@@ -74,16 +77,31 @@ public class LevelController {
 
 				grid.render(context);
 
-				for (GameObject gameObject : gameObjects.values()) {
-					if (gameObject instanceof Penguin) {
-						((Penguin) gameObject).render(context, grid.getTileWidth(), grid.getTileHeight());
+				sprites.get("P1HEADER").render(context, 0, 0);
+				sprites.get("P2HEADER").render(context, 759, 0);
+
+				int i = 0;
+				for (Player player : players) {
+					player.render(context, grid.getTileWidth(), grid.getTileHeight());
+					int j = 0;
+					for (Penguin penguin : player.getPenguins()) {
+						double x = i * 759;
+						double y = j * (grid.getTileHeight() + sprites.get("HEALTH").getBounds().getHeight())
+								+ sprites.get("P1HEADER").getBounds().getHeight();
+
+						penguin.getSprite().render(context, x, y, grid.getTileWidth(), grid.getTileHeight());
+						sprites.get("HEALTH").interpolate(1.0 - penguin.getHealth() / (double) penguin.getMaxHealth());
+						sprites.get("HEALTH").render(context, x, y + grid.getTileHeight());
+						j++;
 					}
+					i++;
 				}
 
-//				for (GameObject gameObject : objectParser.getGameObjects().values()) {
-//					Penguin penguin = (Penguin) gameObject;
-//					penguin.render(context, grid.getTileSize());
-//				}
+				Penguin penguin = turnManager.getSelected();
+				if (penguin != null) {
+					sprites.get("CURSOR").render(context, penguin.getPosition().getX(), penguin.getPosition().getY(),
+							grid.getTileWidth(), grid.getTileHeight());
+				}
 			}
 		};
 		loop.start();
@@ -98,8 +116,9 @@ public class LevelController {
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		ImageParser imageParser = new ImageParser(getPath("animations.txt"));
 		imageParser.parse();
+		sprites = imageParser.getSprites();
 
-		ObjectParser objectParser = new ObjectParser(getPath("objects.config"), imageParser.getSprites());
+		ObjectParser objectParser = new ObjectParser(getPath("objects.config"), sprites);
 		objectParser.parse();
 		gameObjects = objectParser.getGameObjects();
 	}
@@ -133,7 +152,7 @@ public class LevelController {
 						PlayerParser playerParser = new PlayerParser(getPath("Player.config"), gameObjects,
 								grid.getTileWidth(), grid.getTileHeight());
 						playerParser.parse();
-						turnManager = new TurnManager(playerParser.getPlayers());
+						turnManager = new TurnManager(playerParser.getPlayers(), grid);
 						players = playerParser.getPlayers();
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -150,18 +169,19 @@ public class LevelController {
 			@Override
 			public void handle(MouseEvent event) {
 				// TODO Auto-generated method stub
-//				for (GameObject )
 				if (grid == null)
 					return;
 
 				Point2D mousePosition = new Point2D(event.getX(), event.getY());
 				ArrayList<Penguin> penguins = turnManager.getCurrentPlayer().getPenguins();
 				for (Penguin penguin : penguins) {
-					Point2D position = penguin.getPosition();
-					Rectangle2D bounds = new Rectangle2D(position.getX(), position.getY(), grid.getTileWidth(),
-							grid.getTileHeight());
-					if (bounds.contains(mousePosition)) {
-						turnManager.select(penguin);
+					if (penguin.getHealth() > 0) {
+						Point2D position = penguin.getPosition();
+						Rectangle2D bounds = new Rectangle2D(position.getX(), position.getY(), grid.getTileWidth(),
+								grid.getTileHeight());
+						if (bounds.contains(mousePosition) && turnManager.canSelect(penguin)) {
+							turnManager.select(penguin);
+						}
 					}
 				}
 			}
@@ -190,6 +210,9 @@ public class LevelController {
 					break;
 				case BACK_SPACE:
 					turnManager.undoSelected();
+					break;
+				case ENTER:
+					turnManager.completeMovement();
 					break;
 				default:
 					break;

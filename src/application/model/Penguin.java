@@ -13,13 +13,15 @@ public class Penguin extends GameObject {
 	private Point2D direction = new Point2D(0, 1);
 	private int speed;
 	private int health;
+	private int maxHealth;
 	private int power;
 
 	public Penguin(int speed, int health, int power) {
 		// TODO Auto-generated constructor stub
-		this.speed = speed;
-		this.health = health;
-		this.power = power;
+		this.setSpeed(speed);
+		this.setHealth(health);
+		setMaxHealth(health);
+		this.setPower(power);
 	}
 
 	@Override
@@ -61,19 +63,62 @@ public class Penguin extends GameObject {
 		this.direction = new Point2D(x, y).normalize();
 	}
 
-	public void move(double x, double y) {
-		// TODO Auto-generated method stub
-		Point2D nextPosition = position.add(x, y);
-		direction = nextPosition.subtract(position).normalize();
-		position = nextPosition;
+	public int getHealth() {
+		return health;
 	}
-	
-	public void render(GraphicsContext context, double width, double height) {
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
+	public void addHealth(int i) {
+		// TODO Auto-generated method stub
+		setHealth(getHealth() + i);
+	}
+
+	public int getMaxHealth() {
+		return maxHealth;
+	}
+
+	public void setMaxHealth(int maxHealth) {
+		this.maxHealth = maxHealth;
+	}
+
+	public Sprite getSprite() {
+		// TODO Auto-generated method stub
 		double angle = getDirection().angle(1, 0);
 		if (getDirection().dotProduct(0, -1) < 0) {
 			angle = 360 - angle;
 		}
 		int index = (int) Math.floor(angle / 90);
-		sprites.get(index).render(context, position.getX(), position.getY(), width, height);
+		return sprites.get(index);
+	}
+
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+	public int getPower() {
+		return power;
+	}
+
+	public void setPower(int power) {
+		this.power = power;
+	}
+
+	public boolean canMoveTo(Tile tile) {
+		return (tile.getCollisionType() & Tile.BLOCKED) != Tile.BLOCKED;
+	}
+	
+	public boolean canMoveFrom(Tile tile) {
+		return (tile.getCollisionType() & Tile.SLIME) != Tile.SLIME;
+	}
+
+	public void render(GraphicsContext context, double width, double height) {
+		getSprite().render(context, position.getX(), position.getY(), width, height);
 	}
 }
