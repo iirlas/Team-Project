@@ -13,8 +13,6 @@ public class LevelParser extends Parser {
 
 	private ArrayList<Tile> tilemap = new ArrayList<Tile>();
 	HashMap<Integer, GameObject> gameObjects;
-//	private HashMap<Integer, Tile> tiles = new HashMap<Integer, Tile>();
-	private ImageParser imageParser;
 	private Rectangle2D dimensions;
 
 	public LevelParser(File file, HashMap<Integer, GameObject> gameObjects) {
@@ -52,4 +50,12 @@ public class LevelParser extends Parser {
 		lineScanner.close();
 	}
 
+	public void penguins(String arguments, String line) {
+		if (line == null)
+			return;
+		Scanner lineScanner = new Scanner(line);
+		Penguin penguin = (Penguin) gameObjects.get(lineScanner.nextInt());
+		penguin.setPosition(lineScanner.nextDouble() * dimensions.getWidth(), lineScanner.nextDouble() * dimensions.getHeight());
+		lineScanner.close();
+	}
 }

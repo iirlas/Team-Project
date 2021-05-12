@@ -28,4 +28,9 @@ public class Grid {
 			tiles.get(index).getSprite().render(context, x, y, dimensions.getWidth(), dimensions.getHeight());
 		}
 	}
+
+	public Point2D getTileSize() {
+		// TODO Auto-generated method stub
+		return new Point2D(dimensions.getWidth(), dimensions.getHeight());
+	}
 }

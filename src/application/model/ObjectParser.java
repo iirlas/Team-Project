@@ -1,10 +1,9 @@
-package application.controller;
+package application.model;
 
 import java.util.HashMap;
 import java.util.Scanner;
 
-import application.model.Sprite;
-import application.model.Tile;
+import javafx.geometry.Point2D;
 import utility.GameObject;
 import utility.Parser;
 
@@ -38,11 +37,23 @@ public class ObjectParser extends Parser {
 	}
 
 	public void penguin(String arguments, String line) {
-		if (line != null) {
-
+		// create penguin object with animations
+		Scanner argumentScanner = new Scanner(arguments);
+		int id = argumentScanner.nextInt();
+		int speed = argumentScanner.nextInt();
+		int health = argumentScanner.nextInt();
+		int power = argumentScanner.nextInt();
+		double angle = argumentScanner.nextDouble();
+		argumentScanner.close();
+		
+		if (line == null) {
+			Penguin penguin = new Penguin(speed, health, power);
+			gameObjects.put(id, penguin);
 		} else {
-
-			// create penguin object with animations
+			
+			Penguin penguin = (Penguin) gameObjects.get(id);
+			penguin.add(sprites.get(line));
+			penguin.setDirection(Math.cos(Math.toRadians(angle)), Math.sin(Math.toRadians(angle)));
 		}
 	}
 }

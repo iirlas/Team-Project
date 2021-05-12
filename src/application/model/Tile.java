@@ -24,15 +24,15 @@ public class Tile extends GameObject {
 
 	}
 	
-	public void render(GraphicsContext context, double x, double y) {
-		getSprite().render(context, x, y);
-	}
-
 	public Sprite getSprite() {
 		return sprite;
 	}
 
 	public void setSprite(Sprite sprite) {
 		this.sprite = sprite;
+	}
+	
+	public void render(GraphicsContext context, double x, double y) {
+		getSprite().render(context, x, y);
 	}
 }

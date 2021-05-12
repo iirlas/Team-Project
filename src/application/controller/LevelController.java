@@ -11,10 +11,12 @@ import application.model.ConfigParser;
 import application.model.Grid;
 import application.model.ImageParser;
 import application.model.LevelParser;
-import application.model.Tile;
+import application.model.ObjectParser;
+import application.model.Penguin;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -31,7 +33,7 @@ public class LevelController {
 	private Canvas canvas;
 	@FXML
 	private AnchorPane pane;
-	
+
 	private GridPane gridPane = new GridPane();
 	private Grid grid;
 	private HashMap<Integer, GameObject> gameObjects;
@@ -42,22 +44,23 @@ public class LevelController {
 		String directory = "Assets";
 		ImageParser imageParser = new ImageParser(Paths.get(directory, "animations.txt").toString());
 		imageParser.parse();
-		
-		ObjectParser objectParser = new ObjectParser(Paths.get(directory, "objects.config").toString(), imageParser.getSprites());
+
+		ObjectParser objectParser = new ObjectParser(Paths.get(directory, "objects.config").toString(),
+				imageParser.getSprites());
 		objectParser.parse();
 		gameObjects = objectParser.getGameObjects();
-				
+
 		ConfigParser configParser = new ConfigParser(Paths.get(directory, "Levels.config").toString());
 		configParser.parse();
-		
+
 		ArrayList<File> files = configParser.getFiles();
 		gridPane.setMaxSize(canvas.getWidth(), canvas.getHeight());
 		for (int index = 0, size = 100, rowCount = (int) (canvas.getWidth() / size); index < files.size(); index++) {
 			Button button = new Button("Level " + (index + 1));
 			button.setPrefWidth(size);
 			button.setPrefHeight(size);
-			
-			File file = files.get(index); 
+
+			File file = files.get(index);
 			button.setOnMousePressed(new EventHandler<MouseEvent>() {
 
 				@Override
@@ -68,9 +71,9 @@ public class LevelController {
 						grid = new Grid(levelParser.getDimensions(), levelParser.getTiles());
 						gridPane.setDisable(true);
 						for (Node node : gridPane.getChildren()) {
-							node.setVisible(false);							
+							node.setVisible(false);
 						}
-						
+
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -89,10 +92,17 @@ public class LevelController {
 				// TODO Auto-generated method stub
 				context.setFill(Color.BLUE);
 				context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-				if (grid != null) {
-					grid.render(context);
+
+				if (grid == null)
+					return;
+
+				grid.render(context);
+				for (GameObject gameObject : objectParser.getGameObjects().values()) {
+					if (gameObject instanceof Penguin) {
+						Penguin penguin = (Penguin) gameObject;
+						penguin.render(context, grid.getTileSize());
+					}
 				}
-				//turn.render();
 			}
 		};
 		loop.start();
