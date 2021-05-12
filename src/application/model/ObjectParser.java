@@ -43,7 +43,6 @@ public class ObjectParser extends Parser {
 		int speed = argumentScanner.nextInt();
 		int health = argumentScanner.nextInt();
 		int power = argumentScanner.nextInt();
-		double angle = argumentScanner.nextDouble();
 		argumentScanner.close();
 		
 		if (line == null) {
@@ -53,7 +52,7 @@ public class ObjectParser extends Parser {
 			
 			Penguin penguin = (Penguin) gameObjects.get(id);
 			penguin.add(sprites.get(line));
-			penguin.setDirection(Math.cos(Math.toRadians(angle)), Math.sin(Math.toRadians(angle)));
+			
 		}
 	}
 }

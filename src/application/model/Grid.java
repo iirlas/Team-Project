@@ -16,9 +16,14 @@ public class Grid {
 		// TODO Auto-generated constructor stub
 		this.dimensions = dimensions;
 		this.tiles = tiles;
-		for (Tile tile : tiles) {
-			tile.start();
-		}
+	}
+
+	public double getTileWidth() {
+		return dimensions.getWidth();
+	}
+
+	public double getTileHeight() {
+		return dimensions.getHeight();
 	}
 
 	public void render(GraphicsContext context) {
@@ -27,10 +32,5 @@ public class Grid {
 			double y = dimensions.getHeight() * (index / (int) dimensions.getMinX());
 			tiles.get(index).getSprite().render(context, x, y, dimensions.getWidth(), dimensions.getHeight());
 		}
-	}
-
-	public Point2D getTileSize() {
-		// TODO Auto-generated method stub
-		return new Point2D(dimensions.getWidth(), dimensions.getHeight());
 	}
 }

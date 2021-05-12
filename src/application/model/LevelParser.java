@@ -49,13 +49,4 @@ public class LevelParser extends Parser {
 		}
 		lineScanner.close();
 	}
-
-	public void penguins(String arguments, String line) {
-		if (line == null)
-			return;
-		Scanner lineScanner = new Scanner(line);
-		Penguin penguin = (Penguin) gameObjects.get(lineScanner.nextInt());
-		penguin.setPosition(lineScanner.nextDouble() * dimensions.getWidth(), lineScanner.nextDouble() * dimensions.getHeight());
-		lineScanner.close();
-	}
 }

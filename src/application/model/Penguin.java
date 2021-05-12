@@ -23,15 +23,11 @@ public class Penguin extends GameObject {
 	}
 
 	@Override
-	public void start() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void update() {
 		// TODO Auto-generated method stub
-
+		for (Sprite sprite : sprites) {
+			sprite.play();
+		}
 	}
 
 	public void add(Sprite sprite) {
@@ -57,20 +53,27 @@ public class Penguin extends GameObject {
 	}
 
 	public void setDirection(Point2D direction) {
-		this.direction = direction;
+		this.direction = direction.normalize();
 	}
 
 	public void setDirection(double x, double y) {
 		// TODO Auto-generated method stub
-		this.direction = new Point2D(x, y);
+		this.direction = new Point2D(x, y).normalize();
 	}
 
-	public void render(GraphicsContext context, Point2D size) {
+	public void move(double x, double y) {
+		// TODO Auto-generated method stub
+		Point2D nextPosition = position.add(x, y);
+		direction = nextPosition.subtract(position).normalize();
+		position = nextPosition;
+	}
+	
+	public void render(GraphicsContext context, double width, double height) {
 		double angle = getDirection().angle(1, 0);
 		if (getDirection().dotProduct(0, -1) < 0) {
 			angle = 360 - angle;
 		}
-		int index = (int) Math.round(angle / 90);
-		sprites.get(index).render(context, position.getX(), position.getY(), size.getX(), size.getY());
+		int index = (int) Math.floor(angle / 90);
+		sprites.get(index).render(context, position.getX(), position.getY(), width, height);
 	}
 }
