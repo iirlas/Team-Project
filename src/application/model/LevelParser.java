@@ -1,6 +1,5 @@
 package application.model;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -11,32 +10,40 @@ import utility.Parser;
 
 public class LevelParser extends Parser {
 
-	private ArrayList<Tile> tilemap = new ArrayList<Tile>();
-	HashMap<Integer, GameObject> gameObjects;
+	private ArrayList<Tile> tiles = new ArrayList<Tile>();
+	private HashMap<Integer, GameObject> gameObjects;
 	private Rectangle2D dimensions;
+	
+	public ArrayList<Tile> getTiles() {
+		return tiles;
+	}
 
-	public LevelParser(File file, HashMap<Integer, GameObject> gameObjects) {
-		// TODO Auto-generated constructor stub
-		super(file);
+	public void setTiles(ArrayList<Tile> tiles) {
+		this.tiles = tiles;
+	}
+
+	public HashMap<Integer, GameObject> getGameObjects() {
+		return gameObjects;
+	}
+
+	public void setGameObjects(HashMap<Integer, GameObject> gameObjects) {
 		this.gameObjects = gameObjects;
 	}
 
 	public Rectangle2D getDimensions() {
-		// TODO Auto-generated method stub
 		return dimensions;
 	}
 
-	public ArrayList<Tile> getTiles() {
-		// TODO Auto-generated method stub
-		return tilemap;
+	public void setDimensions(Rectangle2D dimensions) {
+		this.dimensions = dimensions;
 	}
 
 	public void dimensions(String arguments, String line) {
 		if (line != null)
 			return;
 		Scanner argumentScanner = new Scanner(arguments);
-		this.dimensions = new Rectangle2D(argumentScanner.nextDouble(), argumentScanner.nextDouble(),
-				argumentScanner.nextDouble(), argumentScanner.nextDouble());
+		this.setDimensions(new Rectangle2D(argumentScanner.nextDouble(), argumentScanner.nextDouble(),
+				argumentScanner.nextDouble(), argumentScanner.nextDouble()));
 		argumentScanner.close();
 	}
 
@@ -45,7 +52,7 @@ public class LevelParser extends Parser {
 			return;
 		Scanner lineScanner = new Scanner(line);
 		while (lineScanner.hasNextInt()) {
-			tilemap.add((Tile) gameObjects.get(lineScanner.nextInt()));
+			getTiles().add((Tile) getGameObjects().get(lineScanner.nextInt()));
 		}
 		lineScanner.close();
 	}

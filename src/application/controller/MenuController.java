@@ -19,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import utility.Parser;
 
 public class MenuController {
 	@FXML
@@ -35,8 +36,10 @@ public class MenuController {
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		GraphicsContext context = canvas.getGraphicsContext2D();
 
-		ImageParser imageParser = new ImageParser(Paths.get("Assets", "animations.txt").toString());
+		ImageParser imageParser = Parser.getInstance(ImageParser.class);
+		imageParser.setFile("Assets", "animations.txt");
 		imageParser.parse();
+
 		Sprite splash = imageParser.getSprite("SPLASH");
 		splash.play();
 		AnimationTimer loop = new AnimationTimer() {

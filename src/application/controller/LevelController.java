@@ -2,6 +2,7 @@ package application.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,22 +17,24 @@ import application.model.Penguin;
 import application.model.Player;
 import application.model.PlayerParser;
 import application.model.Sprite;
-import application.model.Tile;
 import application.model.TurnManager;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.effect.Light.Point;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import utility.GameObject;
+import utility.Parser;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
@@ -114,18 +117,20 @@ public class LevelController {
 
 	private void initObjects() throws FileNotFoundException, NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		ImageParser imageParser = new ImageParser(getPath("animations.txt"));
-		imageParser.parse();
-		sprites = imageParser.getSprites();
+		sprites = Parser.getInstance(ImageParser.class).getSprites();
+		
 
-		ObjectParser objectParser = new ObjectParser(getPath("objects.config"), sprites);
+		ObjectParser objectParser = Parser.getInstance(ObjectParser.class);
+		objectParser.setFile("Assets", "objects.config");
+		objectParser.setSprites(sprites);
 		objectParser.parse();
 		gameObjects = objectParser.getGameObjects();
 	}
 
 	private void initLevel() throws FileNotFoundException, NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		ConfigParser configParser = new ConfigParser(getPath("Levels.config"));
+		ConfigParser configParser = Parser.getInstance(ConfigParser.class);
+		configParser.setFile("Assets", "Levels.config");
 		configParser.parse();
 
 		ArrayList<File> files = configParser.getFiles();
@@ -141,7 +146,9 @@ public class LevelController {
 				@Override
 				public void handle(MouseEvent event) {
 					try {
-						LevelParser levelParser = new LevelParser(file, gameObjects);
+						LevelParser levelParser = Parser.getInstance(LevelParser.class);
+						levelParser.setFile(file);
+						levelParser.setGameObjects(gameObjects);
 						levelParser.parse();
 						grid = new Grid(levelParser.getDimensions(), levelParser.getTiles());
 						gridPane.setDisable(true);
@@ -149,8 +156,11 @@ public class LevelController {
 							node.setVisible(false);
 						}
 
-						PlayerParser playerParser = new PlayerParser(getPath("Player.config"), gameObjects,
-								grid.getTileWidth(), grid.getTileHeight());
+						PlayerParser playerParser = Parser.getInstance(PlayerParser.class);
+						playerParser.setFile("Assets", "Player.config");
+						playerParser.setGameObjects(gameObjects);
+						playerParser.setTileWidth(grid.getTileWidth());
+						playerParser.setTileHeight(grid.getTileHeight());
 						playerParser.parse();
 						turnManager = new TurnManager(playerParser.getPlayers(), grid);
 						players = playerParser.getPlayers();
@@ -213,11 +223,38 @@ public class LevelController {
 					break;
 				case ENTER:
 					turnManager.completeMovement();
+					if (turnManager.getNextPlayer().countAlive() == 0) {
+						endScene();
+					}else if(turnManager.isTurnComplete()) {
+						turnManager.next();
+					}
 					break;
 				default:
 					break;
 				}
 			}
 		});
+	}
+
+	private void endScene() {
+		// TODO Auto-generated method stub
+		Stage stage = (Stage) canvas.getScene().getWindow();
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/view/End.fxml"));
+		try {
+			loader.setControllerFactory(controller -> {
+				Sprite sprite;
+				if (turnManager.getPlayers().get(0).countAlive() > 0) {
+					sprite = Parser.getInstance(ImageParser.class).getSprite("GREENVICTORY");
+				}else {
+					sprite = Parser.getInstance(ImageParser.class).getSprite("BLUEVICTORY");
+				}
+				return new EndController(sprite);						
+			});
+			stage.setScene(new Scene(loader.load()));
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

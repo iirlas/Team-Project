@@ -13,13 +13,8 @@ import utility.Parser;
 
 public class ImageParser extends Parser {
 
+	private HashMap<String, Sprite> sprites = new HashMap<>();
 	private Image image;
-	private HashMap<String, Sprite> sprites;
-
-	public ImageParser(String filepath) {
-		super(filepath);
-		sprites = new HashMap<>();
-	}
 
 	public HashMap<String, Sprite> getSprites() {
 		return sprites;

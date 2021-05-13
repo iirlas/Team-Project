@@ -13,19 +13,34 @@ public class PlayerParser extends Parser {
 	private double tileWidth;
 	private double tileHeight;
 
-	public PlayerParser(String filepath, HashMap<Integer, GameObject> gameObjects, double tileWidth,
-			double tileHeight) {
-		super(filepath);
-		// TODO Auto-generated constructor stub
+	public HashMap<Integer, GameObject> getGameObjects() {
+		return gameObjects;
+	}
+
+	public void setGameObjects(HashMap<Integer, GameObject> gameObjects) {
 		this.gameObjects = gameObjects;
+	}
+
+	public double getTileWidth() {
+		return tileWidth;
+	}
+
+	public void setTileWidth(double tileWidth) {
 		this.tileWidth = tileWidth;
+	}
+
+	public double getTileHeight() {
+		return tileHeight;
+	}
+
+	public void setTileHeight(double tileHeight) {
 		this.tileHeight = tileHeight;
 	}
 
 	public ArrayList<Player> getPlayers() {
 		// TODO Auto-generated method stub
 		ArrayList<Player> players = new ArrayList<>();
-		for (GameObject gameObject : gameObjects.values()) {
+		for (GameObject gameObject : getGameObjects().values()) {
 			if (gameObject instanceof Player) {
 				players.add((Player) gameObject);
 			}
@@ -43,13 +58,13 @@ public class PlayerParser extends Parser {
 		if (line == null) {
 			// add player
 			Player player = new Player(movement);
-			gameObjects.put(id, player);
+			getGameObjects().put(id, player);
 //			players.put(id, player);
 		} else {
 			Scanner lineScanner = new Scanner(line);
-			Player player = (Player) gameObjects.get(id);
-			Penguin penguin = (Penguin) gameObjects.get(lineScanner.nextInt());
-			penguin.setPosition(lineScanner.nextDouble() * tileWidth, lineScanner.nextDouble() * tileHeight);
+			Player player = (Player) getGameObjects().get(id);
+			Penguin penguin = (Penguin) getGameObjects().get(lineScanner.nextInt());
+			penguin.setPosition(lineScanner.nextDouble() * getTileWidth(), lineScanner.nextDouble() * getTileHeight());
 			penguin.setDirection(Math.cos(Math.toRadians(angle)), Math.sin(Math.toRadians(angle)));
 			player.addPenguin(penguin);
 			lineScanner.close();

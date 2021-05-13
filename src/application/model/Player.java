@@ -43,6 +43,17 @@ public class Player extends GameObject {
 		this.movement = movement;
 	}
 
+	public int countAlive() {
+		// TODO Auto-generated method stub
+		int count = 0;
+		for (Penguin penguin : getPenguins()) {
+			if (penguin.getHealth() > 0) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
 	public void render(GraphicsContext context, double width, double height) {
 
 		for (Penguin penguin : penguins) {

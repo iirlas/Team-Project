@@ -12,15 +12,21 @@ public class ObjectParser extends Parser {
 	private HashMap<Integer, GameObject> gameObjects = new HashMap<Integer, GameObject>();
 	private HashMap<String, Sprite> sprites;
 
-	public ObjectParser(String filename, HashMap<String, Sprite> sprites) {
-		// TODO Auto-generated constructor stub
-		super(filename);
-		this.sprites = sprites;
+	public void setGameObjects(HashMap<Integer, GameObject> gameObjects) {
+		this.gameObjects = gameObjects;
 	}
 
 	public HashMap<Integer, GameObject> getGameObjects() {
 		// TODO Auto-generated method stub
 		return gameObjects;
+	}
+
+	public HashMap<String, Sprite> getSprites() {
+		return sprites;
+	}
+
+	public void setSprites(HashMap<String, Sprite> sprites) {
+		this.sprites = sprites;
 	}
 
 	public void tiles(String arguments, String line) {
@@ -31,8 +37,8 @@ public class ObjectParser extends Parser {
 		String spriteName = lineScanner.next();
 		int id = lineScanner.nextInt();
 		int collisionType = lineScanner.nextInt();
-		Tile tile = new Tile(sprites.get(spriteName), collisionType);
-		gameObjects.put(id, tile);
+		Tile tile = new Tile(getSprites().get(spriteName), collisionType);
+		getGameObjects().put(id, tile);
 		lineScanner.close();
 	}
 
@@ -47,11 +53,11 @@ public class ObjectParser extends Parser {
 		
 		if (line == null) {
 			Penguin penguin = new Penguin(speed, health, power);
-			gameObjects.put(id, penguin);
+			getGameObjects().put(id, penguin);
 		} else {
 			
-			Penguin penguin = (Penguin) gameObjects.get(id);
-			penguin.add(sprites.get(line));
+			Penguin penguin = (Penguin) getGameObjects().get(id);
+			penguin.add(getSprites().get(line));
 			
 		}
 	}

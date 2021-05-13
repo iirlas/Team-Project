@@ -10,10 +10,6 @@ public class ConfigParser extends Parser {
 
 	private ArrayList<File> files = new ArrayList<File>();
 
-	public ConfigParser(String filepath) {
-		super(filepath);
-	}
-
 	public ArrayList<File> getFiles() {
 		return files;
 	}
